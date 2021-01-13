@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
 
 export const productsSchema = mongoose.Schema({
+    id: String,
     name: String,
     link: String,
-    brands: String,
+    brand: String,
     price: Number,
     priority: Boolean,
 })

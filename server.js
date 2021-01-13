@@ -21,6 +21,7 @@ mongoose.connect(CONNECTION_URL, {
     useCreateIndex: true,
     useUnifiedTopology: true,
 });
+mongoose.set('useFindAndModify', false);
 
 //endpoints
 app.get('/', (req, res) => res.status(200).send('api'));
@@ -90,6 +91,29 @@ app.post('/v2/users', (req, res) => {
         }
     })
 })
+
+app.delete('/v3/brands', (req, res) => {
+    console.log(req);
+    const deleteBrand = req.body.id;
+    brands.findOneAndRemove({id: deleteBrand}, (err, data) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(201).send(data);
+        }
+    })
+})
+
+// app.delete('/v3/products', (req, res) => {
+//     const deleteProduct = req.body.map(product => product.id);
+//     products.findOneAndRemove({id: deleteProduct}, (err, data) => {
+//         if (err) {
+//             res.status(500).send(err);
+//         } else {
+//             res.status(201).send(data);
+//         }
+//     })
+// })
 
 //listen
 app.listen(port, () => console.log(`test listening on local:${port}`));
