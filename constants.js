@@ -1,1 +1,0 @@
-export const CONNECTION_URL = 'mongodb+srv://admin:qOxEYxq3YgbEGfe2@cluster0.kdjl9.mongodb.net/smartshopper?retryWrites=true&w=majority';
