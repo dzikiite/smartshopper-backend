@@ -1,12 +1,12 @@
 import express from 'express';
+import serverless from 'serverless-http';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import { CONNECTION_URL } from './constants';
+
 import brands from './db-model/dbBrands.js';
 import products from './db-model/dbProducts.js';
 import users from './db-model/dbUsers.js'
-
-// const
-const CONNECTION_URL = 'mongodb+srv://admin:qOxEYxq3YgbEGfe2@cluster0.kdjl9.mongodb.net/smartshopper?retryWrites=true&w=majority';
 
 //app cfg
 const app = express();
@@ -14,6 +14,8 @@ const port = 9000;
 
 app.use(express.json());
 app.use(cors());
+
+export const handler = serverless(app);
 
 //db cfg
 mongoose.connect(CONNECTION_URL, {
@@ -28,7 +30,6 @@ app.get('/', (req, res) => res.status(200).send('api'));
 
 app.get('/v1/brands', (req, res) => {
     brands.find((err, data) => {
-        console.log(data);
         if (err) {
             res.status(500).send(err);
         } else {
@@ -39,7 +40,6 @@ app.get('/v1/brands', (req, res) => {
 
 app.get('/v1/products', (req, res) => {
     products.find((err, data) => {
-        console.log(data);
         if (err) {
             res.status(500).send(err);
         } else {
@@ -50,7 +50,6 @@ app.get('/v1/products', (req, res) => {
 
 app.get('/v1/users', (req, res) => {
     users.find((err, data) => {
-        console.log(data);
         if (err) {
             res.status(500).send(err);
         } else {
@@ -93,7 +92,6 @@ app.post('/v2/users', (req, res) => {
 })
 
 app.delete('/v3/brands', (req, res) => {
-    console.log(req);
     const deleteBrand = req.body.id;
     brands.findOneAndRemove({id: deleteBrand}, (err, data) => {
         if (err) {
@@ -104,16 +102,39 @@ app.delete('/v3/brands', (req, res) => {
     })
 })
 
-// app.delete('/v3/products', (req, res) => {
-//     const deleteProduct = req.body.map(product => product.id);
-//     products.findOneAndRemove({id: deleteProduct}, (err, data) => {
-//         if (err) {
-//             res.status(500).send(err);
-//         } else {
-//             res.status(201).send(data);
-//         }
-//     })
-// })
+app.delete('/v3/products', (req, res) => {
+    const deleteProduct = req.body.id;
+    products.findOneAndRemove({id: deleteProduct}, (err, data) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(201).send(data);
+        }
+    })
+})
+
+app.put('/v4/brands', (req, res) => {
+    const editedBrand = req.body;
+    brands.updateOne({id: editedBrand.id}, editedBrand, (err, data) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(201).send(data);
+        }
+    });
+})
+
+app.put('/v4/products', (req, res) => {
+    const editedProduct = req.body;
+    products.updateOne({id: editedProduct.id}, editedProduct, (err, data) => {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(201).send(data);
+        }
+    });
+})
+
 
 //listen
 app.listen(port, () => console.log(`test listening on local:${port}`));
